@@ -4,7 +4,7 @@ module.exports = db = require('mongoose');
 
 var auth = dbI.username ? 
     ('' + dbI.username + ':' + dbI.password + '@') : '';
-var host = dbI.host || '127.0.0.1';
+var host = dbI.host || '202.206.221.105';
 var port = dbI.port || 27017;
 var dbn = dbI.db;
 
