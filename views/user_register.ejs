@@ -1,0 +1,127 @@
+﻿<% include head %>
+
+<form class="form-horizontal" role="form" action="/user/register" method="post" enctype="multipart/form-data">
+  <h2>注册</h2>
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">用户名（无需真实姓名）</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="username" placeholder="Username" name="name" required autofocus value="<%= typeof(form.name) === 'undefined' ? '' : form.name %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password" class="col-sm-2 control-label">密码（不小于六位）</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="password" placeholder="Password" name="password" required onblur="passwdlen()" oninput="passwdlen1()">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password2" class="col-sm-2 control-label">确认密码</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="password2" placeholder="Password" name="password2" required onfocus="passwdlen()">
+    </div>
+  </div>
+
+  <hr>
+<span class="help-block">手机号码不会对所有人公开，仅对学生身份审核通过的星级用户公开，必填</span>
+  <div class="form-group">
+    <label for="phone" class="col-sm-2 control-label">电话</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="phone" placeholder="Mobile Phone Number" name="phone" required value="<%= typeof(form.phone) === 'undefined' ? '' : form.phone %>" onfocus="passwdlen()">
+</div>
+  </div>
+  <hr>
+<span class="help-block">作为基本联络方式，将会公开，请至少填写一个</span>
+  <div class="form-group">
+    <label for="wechat" class="col-sm-2 control-label">微信</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="wechat" placeholder="WeChat" name="wechat" value="<%= typeof(form.wechat) === 'undefined' ? '' : form.wechat %>" onfocus="passwdlen()">
+    </div>
+  </div>
+<div class="form-group">
+    <label for="qq" class="col-sm-2 control-label">QQ</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="qq" placeholder="qq" name="qq" value="<%= typeof(form.qq) === 'undefined' ? '' : form.qq %>" onfocus="passwdlen()">
+    </div>
+  </div>
+
+  
+  <hr>
+  <span class="help-block">选填信息，不会公布，作为身份验证的材料。审核通过后将自动认证为星级用户</span>
+  
+  <div class="form-group">
+    <label for="stuid" class="col-sm-2 control-label">学号</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="stuid" placeholder="Student ID" name="studentID" value="<%= typeof(form.studentID) === 'undefined' ? '' : form.studentID %>" onfocus="passwdlen()">
+    </div>
+  </div>
+
+
+
+  <div class="form-group">
+    <label for="phone" class="col-sm-2 control-label">上传一卡通照片</label>
+    <div class="col-sm-10">
+      <input type="file" class="form-control" name="image">
+    </div>
+  </div>
+<div class="goods-images">
+   <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/default2.jpg" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/image/default3.jpg" style='width:425px;height:425px'></a>
+</div>
+   <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <input type="checkbox" id="checkbox" onclick="checkboxnull()">我已仔细阅读并同意<a href="http://ncepubbb.com/duty" target="_blank">服务条款</a>
+       </div>
+    </div>
+   <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      为了您获得更好的使用体验，请耐心阅读<a href="http://ncepubbb.com/help" target="_blank">使用说明</a>
+       </div>
+    </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="sub" type="submit" class="btn btn-primary" disabled="disabled">注册</button>
+    </div>
+  </div>
+</form>
+
+<% include foot_script %>
+<script src="<%= settings.imageCDN %>/javascript/sha256.js"></script>
+<script>
+$('form').on('submit', function(e) {
+    var passwd = $('input[type="password"]');
+    for (var i = 0; i < passwd.size(); ++i) {
+      var current = passwd.get(i);
+      var tohash = '<%= settings.frontSalt %>' + current.value;
+      current.value = CryptoJS.SHA256(tohash);
+    }
+    return true;
+});
+
+if(document.getElementById("checkbox").checked===true && document.getElementById("password").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+
+
+function checkboxnull(){
+    if(document.getElementById("checkbox").checked===true && document.getElementById("password").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+    else document.getElementById("sub").disabled="disabled"
+}
+
+function passwdlen(){
+    if(document.getElementById("password").value.length<6){
+        alert("密码长度不能小于六位")
+        document.getElementById("sub").disabled="disabled"
+
+     }
+     else if(document.getElementById("checkbox").checked===true && document.getElementById("password").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+}
+
+function passwdlen1(){
+    if(document.getElementById("password").value.length<6){
+
+        document.getElementById("sub").disabled="disabled"
+
+     }
+     else if(document.getElementById("checkbox").checked===true && document.getElementById("password").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+}
+
+
+</script>
+<% include foot_close %>

@@ -1,0 +1,103 @@
+﻿<% include head %>
+<meta charset="utf-8"/>
+<form class="form-horizontal" role="form" action="/user/modify" method="post" enctype="multipart/form-data">
+  <h2>修改用户信息</h2>
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">用户名</label>
+    <div class="col-sm-10">
+      <p class="form-control-static"><%= user.name %></p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">修改密码</label>
+    <div class="col-sm-10">
+      <a href="/user/passwd" class="btn btn-primary" role="button">请点击</a>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="old-passwd" class="col-sm-2 control-label">原密码</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="old-passwd" placeholder="Old Password" name="oldPassword" autofocus required>
+    </div>
+  </div>
+
+  <hr>
+<span class="help-block">电话信息只有经过审核的在校学生可以看到</span>
+  <div class="form-group">
+    <label for="phone" class="col-sm-2 control-label">电话</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="phone" placeholder="Mobile Phone Number" name="phone" required value="<%=: form.phone | or: user.phone %>">
+    </div>
+  </div>
+  <hr>
+<span class="help-block">至少有一个必填</span>
+  <div class="form-group">
+    <label for="wechat" class="col-sm-2 control-label">微信</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="wechat" placeholder="WeChat" name="wechat" value="<%=: form.wechat | or: user.wechat %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="qq" class="col-sm-2 control-label">qq</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="qq" placeholder="qq" name="qq" value="<%=: form.qq | or: user.qq %>">
+    </div>
+  </div>
+  <hr>
+  <span class="help-block">选填信息</span>
+
+    <div class="form-group">
+    <label for="studentID" class="col-sm-2 control-label">学号</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="studentID" placeholder="Student ID" name="studentID" value="<%=: form.studentID | or: user.studentID %>">
+    </div>
+  </div>
+
+  
+<% if (user.privilege !== 'staruser') { %>
+  <div class="form-group">
+    <label for="phone" class="col-sm-2 control-label">上传一卡通照片</label>
+    <div class="col-sm-10">
+      <input type="file" class="form-control" name="image">
+    </div>
+  </div>
+
+
+<% } %>
+<div class="goods-images">
+<% if (user.privilege === 'user') { %>
+   <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/default2.jpg" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/image/default3.jpg" style='width:425px;height:425px'></a>
+<% } %>
+<% if (user.privilege === 'staruser') { %>
+   <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/star2.jpg" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/image/star3.jpg" style='width:425px;height:425px'></a>
+<% } %>
+<% if (user.privilege === 'failstaruser') { %>
+   <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/fail2.jpg" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/image/fail3.jpg" style='width:425px;height:425px'></a>
+<% } %>
+<% if (user.privilege === 'tostaruser') { %>
+   <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/tostar2.jpg" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/image/tostar3.jpg" style='width:425px;height:425px'></a>
+<% } %>
+
+</div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" id="sub">修改</button>
+    </div>
+  </div>
+</form>
+
+<% include foot_script %>
+<script src="<%= settings.imageCDN %>/javascript/sha256.js"></script>
+<script>
+$('form').on('submit', function(e) {
+    var passwd = $('input[type="password"]');
+    for (var i = 0; i < passwd.size(); ++i) {
+      var current = passwd.get(i);
+      var tohash = '<%= settings.frontSalt %>' + current.value;
+      current.value = CryptoJS.SHA256(tohash);
+    }
+    return true;
+});
+
+</script>
+<% include foot_close %>

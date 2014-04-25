@@ -1,0 +1,240 @@
+﻿<% include head %>
+<div class="page-header">
+<%
+var privilege = 'All';
+switch (condition.privilege) {
+  case 'user': privilege = 'user'; break;
+  case 'administrator': privilege = 'administrator'; break;
+};
+%>
+  <!--<h1><% if (condition.name) { %>
+    <small><em><%= condition.name %>'s</em></small> 
+  <% } %>
+    <%= privilege %> Users</h1>-->
+  <div class="nav-pagine">
+    See
+    <div class="btn-group">
+      <a class="btn btn-default" href="/admin">All</a>
+      <a class="btn btn-primary" href="/admin?privilege=tostaruser">待验证</a>
+      <a class="btn btn-danger" href="/admin?privilege=user">普通用户</a>
+      <a class="btn btn-primary" href="/admin?privilege=staruser">星级用户</a>
+      <a class="btn btn-danger" href="/admin?privilege=failstaruser">验证失败</a>
+    </div>
+  </div>
+</div>
+
+<div id="hidden" class="goods-list" style="margin:0 auto; position:relative; display: none">
+<% for (var i = 0; i < userList.length; ++i) { %>
+  
+    <div class="col-xs-12 col-sm-6 col-md-3">
+      <div class="thumbnail" style="background:url(<%= settings.imageCDN %>/<%= settings.upload %>/background/<%= i%4 %>.jpg) no-repeat; background-size:100% 100%">
+      <a href="<%= settings.imageCDN %>/<%= settings.upload %>/image/<%= userList[i].contact.image %>" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/thumb/<%= userList[i].contact.image %>"></a>
+        <div class="caption">
+          <pre>用户名:<%=: userList[i].name | truncate:30 %>
+用户属性:<%=: userList[i].privilege | truncate:30 %>
+电话:<%=: userList[i].contact.phone | truncate:30 %>
+微信:<%=: userList[i].contact.wechat | truncate:30 %>
+QQ:<%=: userList[i].contact.qq | truncate:30 %>
+学号:<%=: userList[i].contact.studentID | truncate:30 %>
+注册日期:<%=: userList[i].registerDate | formatDate %></pre>
+            <p class="btn-group">
+              <a href="/admin/star?name=<%= userList[i].name %>" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i>加星</a>
+              <a href="/admin/failstar?name=<%= userList[i].name %>" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i>验证失败</a>
+              <!--<a href="/admin/delete?name=<%= userList[i].name %>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> 删除</a>-->
+              <a href="/admin/resetpasswd?name=<%= userList[i].name %>" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> 重置密码</a>
+            </p>
+          
+          </p>
+        </div>
+      </div>
+    </div>split
+<% if (i == userList.length-1) { %>
+  </div>
+<%   } %>
+
+<% } %>
+<div id="show" class="goods-list" style="margin:0 auto; height: auto; position:relative;">
+</div>
+</div>
+<div class="nav-pagine">
+  <ul class="pagination">
+  <% if (page !== 1) { %>
+    <li><a href="/admin?page=<%= 1 %>&amp;privilege=<%= condition.privilege %>">&laquo;</a></li>
+  <% } %>
+  <% for (var i = page-5; i <= page-1; ++i) { 
+     if(i>0) { %>
+    <li><a href="/admin?page=<%= i %>&amp;privilege=<%= condition.privilege %>"><%= i %></a></li>
+  <% } } %>
+    <li class="active"><a href="/admin?page=<%= page %>&amp;privilege=<%= condition.privilege %>"><%= page %></a></li>
+  <% for (var i = page+1; i <= totpage && i-page <= 10; ++i) { %>
+    <li><a href="/admin?page=<%= i %>&amp;privilege=<%= condition.privilege %>"><%= i %></a></li>
+  <% } %>
+  <% if (page+10 < totpage) { %>
+    <li><a>...</a></li>
+  <% } %>
+  <% if (page < totpage) { %>
+    <li><a href="/admin?page=<%= totpage %>&amp;privilege=<%= condition.privilege %>">&raquo;</a></li>
+  <% } %>
+  第<input type="text" size="2" id="page">页<input type="button" onclick="goto()" value="go!">
+  </ul>
+</div>
+
+
+<% include foot_script %>
+<script>
+
+function getStyle(o,name){
+	if(document.defaultView&&document.defaultView.getComputedStyle)
+		return document.defaultView.getComputedStyle(o,null)[name];
+	else
+		return o.currentStyle[name];
+}
+function waterfall(opts){
+	this.init(opts);	
+}
+waterfall.prototype={
+	constructor:waterfall,
+	init:function(opts){
+		this.panel=opts.panel||document.body;
+		this.items=opts.items||[];
+		this.colNum=4;
+		this.colLeft=opts.colLeft||5;
+		this.colTop=opts.colTop||5;
+		this._updated=false;		
+		this.col=[];
+		this.initCol();
+		this.newItems=this.items;
+		this.draw(this.items);
+	},
+	initCol:function(){
+		for(var i=0,len=this.colNum;i<len;i++){
+			this.col[i]={
+				height:0,
+				itemNum:0,
+				idx:i,
+				count:0
+			}
+		}		
+	},
+
+	refresh:function(type){
+		var items;
+		if(this._updated){
+			if(type!=='append'){
+				this.initCol();
+				this.panel.innerHTML='';
+				items=this.items;
+			}else{
+				items=this.newItems;	
+			}
+			this.draw(items);
+		}
+	},
+	_setUpdate:function(updated){
+		if(this._updated!=updated){
+			this._updated=updated;
+		}
+	},
+	setColNum:function(num){
+		if(num==this.colNum)return;
+		this._setUpdate(true);
+		this.colNum=num;
+	},
+	setColLeft:function(leftSpan){
+		this._setUpdate(true);
+		this.colLeft=leftSpan;
+	},
+	setColTop:function(topSpan){
+		this._setUpdate(true);
+		this.colLeft=leftSpan;	
+	},
+	addItems:function(items){
+		this._setUpdate(true);
+		this.items=this.items.concat(items);
+		this.newItems=items;
+	},
+		
+	draw:function(items){
+		var that=this,
+			i=0,
+			p=this.panel,
+			len=items.length;
+		for(;i<len;i++){
+			var r=Math.floor(i/this.colNum);
+			var w=parseInt(getStyle(p,'width'))/this.colNum-this.colLeft;			
+			var curCol=this.getMinHeightCol();
+			var c=curCol.idx;
+			var t=curCol.height+this.colTop;
+			var l=c*(w+this.colLeft)+this.colLeft;		
+			var oitem=this.createItem(w,l,t,items[i]);
+			p.appendChild(oitem);
+			var itemH=oitem.offsetHeight;
+			curCol.height=curCol.height+itemH+this.colTop;
+			curCol.count++;
+                     var maxCol=this.getMaxHeightCol();
+			p.style.height=maxCol.height+'px';
+		}
+	},
+	createItem:function(w,l,t,html){
+		var oitem=document.createElement('div');
+		oitem.innerHTML=html;
+		oitem=oitem.firstChild;
+		oitem.style.position='absolute';
+		oitem.style.width=w+'px';
+		oitem.style.left=l+'px';
+		oitem.style.top=t+'px';
+		return oitem;
+	},
+	getMinHeightCol:function(){
+		var idx=0,minner=this.col[idx].height;
+		for(var i=0,len=this.colNum;i<len;i++){			
+			if(minner>this.col[i].height){				
+				minner=this.col[i].height;
+				idx=i;	
+						
+			}					
+		}
+		return this.col[idx];
+	},
+        getMaxHeightCol:function(){
+		var idx=0,maxxer=this.col[idx].height;
+		for(var i=0,len=this.colNum;i<len;i++){			
+			if(maxxer<this.col[i].height){				
+				maxxer=this.col[i].height;
+				idx=i;	
+						
+			}					
+		}
+		return this.col[idx];
+	}
+}
+
+var a=document.getElementById("hidden").innerHTML
+var b=a.replace(/"([^"]*)"/g, "'$1'");
+var c=b.replace(/\s*</g,"<");
+var d=c.split("split")
+var items=[];
+items=d
+var panel=document.getElementById('show');
+
+
+var flow=new waterfall({
+					   panel:panel,
+					   items:items.slice(0,8),
+					   colLeft:5,
+					   colTop:5
+					  })
+var loadnum=2
+window.onscroll=function(){
+                   if(loadnum*4+4<items.length) flow.addItems(items.slice(loadnum*4,loadnum*4+4))
+                   else flow.addItems(items.slice(loadnum*4,items.length-1))
+		flow.refresh('append')
+              loadnum++
+}
+function goto()
+{
+var url="/admin?page="+document.getElementById('page').value+"&privilege=<%= condition.privilege %>"
+location.href=url
+}
+</script>
+<% include foot_close %>

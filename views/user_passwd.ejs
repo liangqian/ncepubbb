@@ -1,0 +1,91 @@
+<% include head %>
+<meta charset="utf-8"/>
+<form class="form-horizontal" role="form" action="/user/passwd" method="post" enctype="multipart/form-data">
+  <h2>修改密码</h2>
+  <div class="form-group">
+    <label for="username" class="col-sm-2 control-label">用户名</label>
+    <div class="col-sm-10">
+      <p class="form-control-static"><%= user.name %></p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="old-passwd" class="col-sm-2 control-label">原密码</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="old-passwd" placeholder="Old Password" name="oldPassword" autofocus required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="new-passwd" class="col-sm-2 control-label">新密码（不小于六位）</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="new-passwd" placeholder="New Password" name="newPassword" required onblur="passwdlen()" oninput="passwdlen1()">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="new-passwd2" class="col-sm-2 control-label">确认新密码</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="new-passwd2" placeholder="New Password" name="newPassword2" onblur="passwdcheck()" oninput="passwdcheck1()" required>
+    </div>
+  </div>
+
+
+  
+
+
+
+
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" id="sub">修改</button>
+    </div>
+  </div>
+</form>
+
+<% include foot_script %>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha256.js"></script>
+<script>
+$('form').on('submit', function(e) {
+    var passwd = $('input[type="password"]');
+    for (var i = 0; i < passwd.size(); ++i) {
+      var current = passwd.get(i);
+      var tohash = '<%= settings.frontSalt %>' + current.value;
+      current.value = CryptoJS.SHA256(tohash);
+    }
+    return true;
+});
+
+
+function passwdcheck(){
+    if(document.getElementById("new-passwd2").value!=document.getElementById("new-passwd").value){
+          alert("两次新密码输入不一致")
+          document.getElementById("sub").disabled="disabled"
+    }
+    else document.getElementById("sub").removeAttribute('disabled')
+}
+
+function passwdcheck1(){
+    if(document.getElementById("new-passwd2").value!=document.getElementById("new-passwd").value){
+          document.getElementById("sub").disabled="disabled"
+    }
+    else document.getElementById("sub").removeAttribute('disabled')
+}
+
+function passwdlen(){
+    if(document.getElementById("new-passwd").value.length<6){
+        alert("密码长度不能小于六位")
+        document.getElementById("sub").disabled="disabled"
+
+     }
+     else if(document.getElementById("new-passwd").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+}
+
+function passwdlen1(){
+    if(document.getElementById("new-passwd").value.length<6){
+
+        document.getElementById("sub").disabled="disabled"
+
+     }
+     else if(document.getElementById("new-passwd").value.length>5) document.getElementById("sub").removeAttribute('disabled')
+}
+</script>
+<% include foot_close %>

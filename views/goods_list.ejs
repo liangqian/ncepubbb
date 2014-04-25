@@ -1,0 +1,340 @@
+﻿<% include head %>
+<div class="page-header">
+<%
+var status = 'All';
+switch (condition.status) {
+  case 'finished': status = 'Sold'; break;
+  case 'published': status = 'Selling'; break;
+};
+%>
+  <h1><% if (condition.user) { %>
+    <small><em><%= condition.user %>的</em></small> 
+  <% } %>
+    <% if(status=='All') { %>全部<% } %><% if(status=='Sold') { %>已达成<% } %><% if(status=='Selling') { %>未达成<% } %><% if (condition.tags) { %><small>of <a href="/goods?status=<%= condition.status %>&amp;user=<%= condition.user %>"><span class="label label-warning"><%= condition.tags %></span></a></small><% } %></h1>
+    <% if (condition.user) { %>
+        <% if (phone!='') { 
+           if ( user.privilege === 'administrator' || user.privilege === 'staruser') { %>
+        <div class="row">
+            <div class="col-xs-2">手机</div>
+            <div><%= phone %></div>
+        </div>
+        <% } } %>
+        <% if (wechat!='') { %>
+        <div class="row">
+            <div class="col-xs-2">微信</div>
+            <div><%= wechat %></div>
+        </div>
+        <% } %>
+        <% if (qq!='') { %>
+        <div class="row">
+            <div class="col-xs-2">QQ</div>
+            <div><%= qq %></div>
+        </div>
+        <% } %>
+     <% } %>
+  <div class="nav-pagine">
+    查看
+    <div class="btn-group">
+      <a class="btn btn-default" href="/goods?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>">全部</a>
+      <a class="btn btn-primary" href="/goods?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;status=published&amp;tags=<%= condition.tags %>">未达成</a>
+      <a class="btn btn-danger" href="/goods?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;status=finished&amp;tags=<%= condition.tags %>">已达成</a>
+    </div>
+  </div>
+  <div>
+    <a href="/goods/new" class="btn btn-lg btn-info"><i class="glyphicon glyphicon-plus"></i> 添加请求</a>
+  </div>
+</div>
+
+<div id="hidden" class="goods-list" style="margin:0 auto; position:relative; display: none">
+<% for (var i = 0; i < goods.length; ++i) { %>
+  
+    <div class="col-xs-12 col-sm-6 col-md-3">
+    <% var color1="#86b615";color2="#f99519";color3="#fdc71d";color0="#cad902"; %>
+
+      <!--<div class="thumbnail" style="background:url(<%= settings.imageCDN %>/<%= settings.upload %>/background/<%= i%4 %>.jpg) no-repeat; background-size:100% 100%">-->
+      <% if (i%4==0) { %>
+      <div class="thumbnail" style="background-color:<%= color0 %>">
+      <% } %>
+      <% if (i%4==1) { %>
+      <div class="thumbnail" style="background-color:<%= color1 %>">
+      <% } %>
+      <% if (i%4==2) { %>
+      <div class="thumbnail" style="background-color:<%= color2 %>">
+      <% } %>
+      <% if (i%4==3) { %>
+      <div class="thumbnail" style="background-color:<%= color3 %>">
+      <% } %>
+      <% if (goods[i].images.length) { %>
+      <a href="/goods/<%= goods[i].id %>" title="<%= goods[i].title %>"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/thumb/<%= goods[i].images[0].path %>" alt="<%= goods[i].title %>"></a>
+      <% } %>
+        <div class="caption">
+          <h3><a href="/goods/<%= goods[i].id %>" title="<%= goods[i].title %>"><font color="#000000"><%=: goods[i].title | truncate:30 %></font></a></h3>
+          <pre><%=: goods[i].content | truncate:100 %></pre> <!--truncate 截取100个字符-->
+          <p><strong>Tags:</strong><% for (var j = 0; j < goods[i].tags.length; ++j) { %>
+             <a href="/goods?tags=<%= goods[i].tags[j] %>"><span class="label label-default"><%= goods[i].tags[j] %></span></a>
+          <% } %></p>
+          <p>
+          <% if (goods[i].status === 'finished') { %>
+            <% if (user.name === goods[i].user || user.privilege === 'administrator') { %>
+                <a href="/goods/<%= goods[i].id %>/chstatus?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;status=<%= condition.status %>&amp;tags=<%= condition.tags %>&amp;page=<%= condition.page %>" id="chfinished" class="btn btn-danger" role="button">已达成（点击更改）</a>
+            <% } else { %>
+                <a href="/goods/<%= goods[i].id %>" class="btn btn-danger" role="button">已达成</a>
+            <% } %>
+          <% } else { %>
+            <% if (user.name === goods[i].user || user.privilege === 'administrator') { %>
+                <a href="/goods/<%= goods[i].id %>/chstatus?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;status=<%= condition.status %>&amp;tags=<%= condition.tags %>&amp;page=<%= condition.page %>" id="chpublished" class="btn btn-primary" role="button"><i class="glyphicon glyphicon-chevron-right"></i> 未达成（点击更改）</a>
+            <% } else { %>
+                <a href="/goods/<%= goods[i].id %>" class="btn btn-primary" role="button"><i class="glyphicon glyphicon-chevron-right"></i>未达成</a>
+            <% } %>
+          <% } %>
+      <!-- try to ajax,failed      <% if (user.privilege === 'administrator') { %>
+                <input type="button" onclick=ajaxTest("<%= goods[i].id %>","<%= i %>") id="chfinished<%= i %>" class="btn btn-danger" value="已达成（点击更改）">
+                <a href="javascript:ajaxTest(<%= goods[i].id %>,<%= i %>);" id="chpublished<%= i %>" class="btn btn-primary" role="button"><i class="glyphicon glyphicon-chevron-right"></i> 未达成（点击更改）</a>
+            <% } %>-->
+          </p>
+          <% if (user.name === goods[i].user || user.privilege === 'administrator') { %>
+            <p class="btn-group">
+              <a href="/goods/<%= goods[i].id %>/modify" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i> 修改</a>
+              <a href="/goods/<%= goods[i].id %>/delete" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> 删除</a>
+            </p>
+          <% } %>
+
+             <a href="/goods/<%= goods[i].id %>/interest?class=<%= condition.class %>&amp;user=<%= condition.user %>&amp;status=<%= condition.status %>&amp;tags=<%= condition.tags %>&amp;page=<%= condition.page %>" class="btn btn-warning">我感兴趣！</a>
+             <p><%= goods[i].intenum %>人对此感兴趣</p>
+
+          </p>
+        </div>
+      </div>
+    </div>split
+<% if (i == goods.length-1) { %>
+  </div>
+<%   } %>
+
+<% } %>
+<div id="show" class="goods-list" style="margin:0 auto; height: auto; position:relative;">
+</div>
+<% if(goods.length==0) { %>
+</div>
+<% } %> 
+<div class="nav-pagine">
+  <ul class="pagination">
+  <% if (page !== 1) { %>
+    <li><a href="/goods?class=<%= condition.class %>&amp;page=<%= 1 %>&amp;status=<%= condition.status %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>">&laquo;</a></li>
+  <% } %>
+  <% for (var i = page-5; i <= page-1; ++i) { 
+     if(i>0) { %>
+    <li><a href="/goods?class=<%= condition.class %>&amp;page=<%= i %>&amp;status=<%= condition.status %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>"><%= i %></a></li>
+  <% } } %>
+    <li class="active"><a href="/goods?class=<%= condition.class %>&amp;page=<%= page %>&amp;status=<%= condition.status %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>"><%= page %></a></li>
+  <% for (var i = page+1; i <= totpage && i-page <= 10; ++i) { %>
+    <li><a href="/goods?class=<%= condition.class %>&amp;page=<%= i %>&amp;status=<%= condition.status %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>"><%= i %></a></li>
+  <% } %>
+  <% if (page+10 < totpage) { %>
+    <li><a>...</a></li>
+  <% } %>
+  <% if (page < totpage) { %>
+    <li><a href="/goods?class=<%= condition.class %>&amp;page=<%= totpage %>&amp;status=<%= condition.status %>&amp;user=<%= condition.user %>&amp;tags=<%= condition.tags %>">&raquo;</a></li>
+  <% } %>
+  第<input type="text" size="2" id="page">页<input type="button" onclick="goto()" value="go!">
+  </ul>
+</div>
+
+<% include foot_script %>
+<script>
+function getStyle(o,name){
+	if(document.defaultView&&document.defaultView.getComputedStyle)
+		return document.defaultView.getComputedStyle(o,null)[name];
+	else
+		return o.currentStyle[name];
+}
+function waterfall(opts){
+	this.init(opts);	
+}
+waterfall.prototype={
+	constructor:waterfall,
+	init:function(opts){
+		this.panel=opts.panel||document.body;
+		this.items=opts.items||[];
+		this.colNum=4;
+              if(is_mobile()=="large") this.colNum=3;
+              else if(is_mobile()=="small") this.colNum=2;
+		this.colLeft=opts.colLeft||5;
+		this.colTop=opts.colTop||5;
+		this._updated=false;		
+		this.col=[];
+		this.initCol();
+		this.newItems=this.items;
+		this.draw(this.items);
+	},
+	initCol:function(){
+		for(var i=0,len=this.colNum;i<len;i++){
+			this.col[i]={
+				height:0,
+				itemNum:0,
+				idx:i,
+				count:0
+			}
+		}		
+	},
+
+	refresh:function(type){
+		var items;
+		if(this._updated){
+			if(type!=='append'){
+				this.initCol();
+				this.panel.innerHTML='';
+				items=this.items;
+			}else{
+				items=this.newItems;	
+			}
+			this.draw(items);
+		}
+	},
+	_setUpdate:function(updated){
+		if(this._updated!=updated){
+			this._updated=updated;
+		}
+	},
+	setColNum:function(num){
+		if(num==this.colNum)return;
+		this._setUpdate(true);
+		this.colNum=num;
+	},
+	setColLeft:function(leftSpan){
+		this._setUpdate(true);
+		this.colLeft=leftSpan;
+	},
+	setColTop:function(topSpan){
+		this._setUpdate(true);
+		this.colLeft=leftSpan;	
+	},
+	addItems:function(items){
+		this._setUpdate(true);
+		this.items=this.items.concat(items);
+		this.newItems=items;
+	},
+		
+	draw:function(items){
+		var that=this,
+			i=0,
+			p=this.panel,
+			len=items.length;
+		for(;i<len;i++){
+			var r=Math.floor(i/this.colNum);
+			var w=parseInt(getStyle(p,'width'))/this.colNum-this.colLeft;			
+			var curCol=this.getMinHeightCol();
+			var c=curCol.idx;
+			var t=curCol.height+this.colTop;
+			var l=c*(w+this.colLeft)+this.colLeft;		
+			var oitem=this.createItem(w,l,t,items[i]);
+			p.appendChild(oitem);
+			var itemH=oitem.offsetHeight;
+			curCol.height=curCol.height+itemH+this.colTop;
+			curCol.count++;
+                     var maxCol=this.getMaxHeightCol();
+			p.style.height=maxCol.height+'px';
+		}
+	},
+	createItem:function(w,l,t,html){
+		var oitem=document.createElement('div');
+		oitem.innerHTML=html;
+		oitem=oitem.firstChild;
+		oitem.style.position='absolute';
+		oitem.style.width=w+'px';
+		oitem.style.left=l+'px';
+		oitem.style.top=t+'px';
+		return oitem;
+	},
+	getMinHeightCol:function(){
+		var idx=0,minner=this.col[idx].height;
+		for(var i=0,len=this.colNum;i<len;i++){			
+			if(minner>this.col[i].height){				
+				minner=this.col[i].height;
+				idx=i;	
+						
+			}					
+		}
+		return this.col[idx];
+	},
+        getMaxHeightCol:function(){
+		var idx=0,maxxer=this.col[idx].height;
+		for(var i=0,len=this.colNum;i<len;i++){			
+			if(maxxer<this.col[i].height){				
+				maxxer=this.col[i].height;
+				idx=i;	
+						
+			}					
+		}
+		return this.col[idx];
+	}
+}
+
+var a=document.getElementById("hidden").innerHTML
+var b=a.replace(/"([^"]*)"/g, "'$1'");
+var c=b.replace(/\s*</g,"<");
+var d=c.split("split")
+
+
+var items=[];
+items=d
+var panel=document.getElementById('show');
+
+var flow=new waterfall({
+					   panel:panel,
+					   items:items.slice(0,6),
+					   colLeft:-10,
+					   colTop:5
+					  })
+var loadnum=3
+window.onscroll=function(){
+                   if(loadnum*2+2<items.length) flow.addItems(items.slice(loadnum*2,loadnum*2+2))
+                   else flow.addItems(items.slice(loadnum*2,items.length-1))
+		flow.refresh('append')
+              loadnum++
+}
+
+function refresh()
+{
+window.location.reload();    
+}
+
+function goto()
+{
+var url="/goods?page="+document.getElementById('page').value+"&status=<%= condition.status %>&user=<%= condition.user %>&tags=<%= condition.tags %>"
+location.href=url
+}
+
+    window.addEventListener("resize", function () {
+        document.getElementById("show").innerHTML=""
+        var flow=new waterfall({
+					   panel:panel,
+					   items:items,
+					   colLeft:-5,
+					   colTop:5
+					  })
+    }, false); 
+/*try to ajax,but failed
+    function ajaxTest(goodsid,id){
+        $.ajax({
+            url: '/goods/:'+goodsid+'/chstatus.json',
+            type: 'GET',
+            success: function(data){
+                if(data){
+                    var status = data.status;
+                    var oid="chfinished"+id
+                    alert(status)
+                    document.getElementById("chfinished2").style.display='none';
+
+                   // document.getElementById(oid).style.display='none';
+                   // $('#chpublished').style.display='none';
+                };
+            },
+            error: function(xmlHTTPRequest, status, error){
+                console.log(status);
+                alert("nothing");
+            }
+        })
+    }
+*/
+</script>
+<% include foot_close %>

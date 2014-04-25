@@ -1,0 +1,86 @@
+    </div>
+    <div id="pc" class="footer" role="footer" style="display:none">
+    <div style="position:relative;float:left">
+        <p><small>Powered by <em><a href="https://github.com/abcdabcd987/offchange">OffChange</a></em> &copy; Lequn Chen and petersun</small></p>
+        <p>在线客服</p>
+        <p> <a href="javascript:void(0);" sid="191647886" title="关注" class="wsqFollowDiv">关注</a> <script src="http://dzqun.gtimg.cn/quan/scripts/widgets/follow.js" charset="utf-8"></script><p>
+    </div>
+    <div style="position:relative;left:10%;float:left">        
+        <p><a href="http://ncepubbb.com/help">使用说明</a></p>
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/boy.jpg' style='width:30px;height:30px'>华先森15632255680 扣扣370602376</p><!--<img src='http://ncepubbb-com.qiniudn.com/upload/background/wechatboy.png' style='width:80px;height:80px'>-->
+    </div>
+    <div style="position:relative;right:2%;float:right">
+        <p><a href="http://ncepubbb.com/duty">服务条款</a></p>
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/girl.jpg' style='width:30px;height:30px'>电菇凉18330220818 微信Veggie_Tsai</p>
+    </div>
+    </div>
+    <div id="large" class="footer" role="footer" style="display:none">
+    <div style="position:relative;left:2%;float:left">
+        <p><small>Powered by <em><a href="https://github.com/abcdabcd987/offchange">OffChange</a></em> &copy; Lequn Chen and petersun</small></p>
+        <p><a href="http://ncepubbb.com/help">使用说明</a></p>
+        <p><a href="http://ncepubbb.com/duty">服务条款</a></p>
+    </div>
+    <div style="position:relative;right:2%;float:right"> 
+        <p>在线客服</p>        
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/boy.jpg' style='width:30px;height:30px'>华先森15632255680 扣扣370602376</p>
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/girl.jpg' style='width:30px;height:30px'>电菇凉18330220818 微信Veggie_Tsai</p>
+    </div>
+    </div>
+    <div id="small" class="footer" role="footer" style="display:none">
+    <div style="position:relative;left:2%;float:left">
+        <p><small>Powered by <em><a href="https://github.com/abcdabcd987/offchange">OffChange</a></em> &copy; Lequn Chen and petersun</small></p>
+        <p>在线客服</p>        
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/boy.jpg' style='width:30px;height:30px'>华先森15632255680 扣扣370602376</p>
+        <p><img src='http://ncepubbb-com.qiniudn.com/upload/background/girl.jpg' style='width:30px;height:30px'>电菇凉18330220818 微信Veggie_Tsai</p>
+        <p><a href="http://ncepubbb.com/help">使用说明</a></p>
+        <p><a href="http://ncepubbb.com/duty">服务条款</a></p>
+    </div>
+    </div>
+
+    <script src="//cdnjscn.b0.upaiyun.com/libs/jquery/1.10.0/jquery.min.js"></script>
+    <script src="//cdnjscn.b0.upaiyun.com/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script>
+function is_mobile() { 
+  if(document.body.clientWidth>=1300){
+    return "pc";
+  }
+  else if(document.body.clientWidth<1300 && document.body.clientWidth>600){
+    return "large";
+  }
+  else{
+        return "small";
+    }
+}
+if(is_mobile()=="pc"){
+document.getElementById("pc").style.display="inline";
+}
+else if(is_mobile()=="large"){
+document.getElementById("large").style.display="inline";
+}
+else{
+document.getElementById("small").style.display="inline";
+}
+if(document.body.clientWidth<600){
+document.getElementById("phonetip").style.display="inline";
+} 
+    window.addEventListener("resize", function () {
+        if(is_mobile()=="large"){
+            document.getElementById("large").style.display="inline";
+            document.getElementById("small").style.display="none";
+            document.getElementById("pc").style.display="none";
+            document.getElementById("phonetip").style.display="none";
+        }
+        else if(is_mobile()=="small"){
+            document.getElementById("small").style.display="inline";
+            document.getElementById("large").style.display="none";
+            document.getElementById("pc").style.display="none";
+            document.getElementById("phonetip").style.display="inline";
+        }
+        else{
+            document.getElementById("large").style.display="none";
+            document.getElementById("small").style.display="none";
+            document.getElementById("pc").style.display="inline";
+            document.getElementById("phonetip").style.display="none";
+        }
+    }, false); 
+</script>

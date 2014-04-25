@@ -1,0 +1,142 @@
+﻿<% include head %>
+
+<form role="form" action="/goods/<%= goods.id %>/modify" method="post" enctype="multipart/form-data">
+  <h2>修改请求</h2>
+  <div class="form-group">
+    <label for="title">标题（必填）</label>
+    <input type="text" class="form-control" id="title" placeholder="请求的简单描述" name="title" value="<%= goods.title %>" required>
+  </div>
+  <div class="checkbox">
+    <label><% if (goods.status === 'published') { %>
+      <input type="checkbox" name="finished" value="0"> 请求已经达成了吗？
+    <% } else { %>
+      <input type="checkbox" name="finished" value="1" checked> 请求已经达成了吗？
+    <% } %>
+    </label>
+  </div>
+  <div class="form-group">
+    <label for="content">描述（必填）</label>
+    <textarea name="content" id="content" placeholder="详细描述你的请求" class="form-control" rows="7" required><%= goods.content %></textarea>
+  </div>
+  <div class="form-group">
+    <label for="content">请选择一个类别（必填）</label>
+
+
+      <input type="checkbox" name="class" value="0" onclick="selectOne(this)" checked>SOS!
+
+      <input type="checkbox" name="class" value="1" onclick="selectOne(this)">我来帮帮你
+
+      <input type="checkbox" name="class" value="2" onclick="selectOne(this)">求购物品
+
+      <input type="checkbox" name="class" value="3" onclick="selectOne(this)">闲置出手
+
+      <input type="checkbox" name="class" value="4" onclick="selectOne(this)">来组团吧
+</div>
+
+<% if (goods.images.length>0) { %>
+  <div class="form-group">
+    <label>图片</label>
+<% for (var i = 0; i < goods.images.length; ++i) { 
+  if (i % 4 == 0) {
+%>
+    <div class="row">
+<% } %>
+      <div class="col-xs-12 col-sm-6 col-md-3 image-to-modify-div">
+        <div class="thumbnail">
+          <a href="/<%= settings.upload %>/<%= goods.images[i].path %>" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/thumb/<%= goods.images[i].path %>" alt="image"></a>
+          <div class="caption">
+            <p><button href="#" class="btn btn-danger" role="button">删除</button>
+              <input type="hidden" name="delete[<%= i %>]" value="no"></p>
+          </div>
+        </div>
+      </div>
+<% if (i % 4 == 3 || i == goods.images.length-1) { %>
+    </div>
+<%   } %>
+<% } %>
+  </div>
+<% } %>
+  <div class="form-group">
+    <label>上传图片（选填）</label>
+    <div class="upload-group">
+    <% var count = fileCount || 1; %>
+    <% for (var i = 0; i < count; ++i) { %>
+      <input id="<%= i %>" type="file" class="form-control" name="images[<%= i %>]"><input id="bt<%=i%>" type="button" value="删除" onclick="DeleteInput(<%=i%>)">
+    <% } %>
+    </div>
+    <a class="btn btn-default add-upload">添加图片</a>
+  </div>
+  <div class="form-group">
+    <label for="tags">标签（必填）</label>
+    <input type="text" class="form-control" id="tags" placeholder="添加标签可以使别人更方便得找到你的请求，多个标签使用英文的','进行分割" name="tags" value="<%= goods.tags %>" required>
+  </div>
+  <button type="submit" class="btn btn-primary">修改</button>
+</form>
+
+<% include foot_script %>
+<script>
+var totfiles = 1;
+$(".add-upload").on('click', function(e) {
+  e.preventDefault();
+  $('.upload-group').append('<input id="'+totfiles+'" type="file" class="form-control" name="images['+ totfiles +']"><input id="bt'+totfiles+'" type="button" value="删除" onclick="DeleteInput('+(totfiles++)+')">');
+  return false;
+});
+$(".image-to-modify-div button").on('click', function(e) {
+  e.preventDefault();
+  var btn = $(this);
+  var div = btn.parent().parent().parent();
+  var img = div.find("img");
+  var input = btn.parent().find("input");
+  if (btn.hasClass("active")) {
+    btn.html("删除");
+    btn.removeClass("active");
+    div.css({ opacity: 1. });
+    img.css({ opacity: 1. });
+    input.val("no");
+  } else {
+    btn.html("将被删除");
+    btn.addClass("active");;
+    div.css({ opacity: .5 });
+    img.css({ opacity: .1 });
+    input.val("yes");
+  }
+  return false;
+});
+function DeleteInput(i)
+{
+    var o=document.getElementById(i);
+    if(o==null)
+    {
+        alert("对象不存在");
+        return;
+    }
+    o.parentNode.removeChild(o);
+    var o=document.getElementById("bt"+i);
+    if(o==null)
+    {
+        alert("对象不存在");
+        return;
+    }
+    o.parentNode.removeChild(o);
+
+}
+
+
+    function selectOne(obj){ 
+     var objCheckBox = document.getElementsByName("class"); 
+     for(var i=0;i<objCheckBox.length;i++){ 
+         //判断复选框集合中的i元素是否为obj，若为否则便是未被选中 
+         if (objCheckBox[i]!=obj) { 
+             objCheckBox[i].checked = false; 
+         } else{ 
+             //若是，原先为被勾选的变成勾选，反之则变成未勾选 
+             //objCheckBox[i].checked = obj.checked; 
+              
+             //或者使用下句，亦可达到同样效果 
+             objCheckBox[i].checked = true; 
+         } 
+     } 
+    } 
+
+</script>
+<% include foot_close %>

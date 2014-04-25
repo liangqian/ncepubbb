@@ -1,0 +1,88 @@
+<% include head %>
+<style>
+   img{border:0}
+   img.fixed {display:block;}
+   #body-content {position:relative;width:1100px;height:700px;left:11%;margin-left:-150px;border:1px solid 
+
+#CCC;overflow:hidden}
+   
+   #bottom-word {left:0px;width:300px;height:110px;filter:alpha(opacity=40); 
+   -moz-opacity:0.4; opacity:0.4;position:absolute;bottom:0px;background-color:#000}
+   #word-title {position:absolute;width:300px;height:40px;color:#FFF;line-height:40px;display:block;z-index:105;bottom:70px;left:0px;border-top:1px solid #CCC}
+   .img-buttom {width:60px;height:60px;float:left;border:1px;solid #FFF}
+   #imglist-div {width:300px;position:absolute;bottom:10px;left:0px;height:60px;}
+   #img-ul {width:300px;margin:0px;padding:0px;list-style:none}
+   #img-ul li {list-style:none;float:left;background-color:#CCC;margin-left:6px;margin-right:6px;width:60px;height:60px;border:1px solid #FFF;cursor:pointer;overflow:hidden;display: inline;}
+  #img-ul li img {width:100%;height:100%;}
+   
+   .img-list2 {filter:alpha(opacity=50); 
+   -moz-opacity:0.5; opacity:0.5;}
+</style> 
+<div class="jumbotron">
+   <!-- <h1><%= settings.websiteName %></h1>
+    <p><%= settings.websiteName %> is designed for offline exchange. Haven't done yet.</p>
+    <p><a href="/goods" class="btn btn-primary btn-lg" role="button">Go to goods &raquo;</a></p>-->
+
+
+   <div class="thumbnail">
+    <img id="js-img"/>
+
+    <!--<div id="imglist-div">
+     <ul id="img-ul">
+
+<li id="img-but1" class="imglistbut" imgid="1"><img word="" class="img-list1" 
+
+src="http://sandbox.runjs.cn/uploads/rs/4/pfpcon3m/img_1.jpg"/></li>
+      <li id="img-but2" class="imglistbut" imgid="2"><img word="" class="img-list2" 
+
+src="http://sandbox.runjs.cn/uploads/rs/4/pfpcon3m/img_2.jpg"/></li>
+      <li id="img-but3" class="imglistbut" imgid="3"><img word="" class="img-list2" 
+
+src="http://sandbox.runjs.cn/uploads/rs/4/pfpcon3m/img_3.jpg"/></li>
+      <li id="img-but4" class="imglistbut" imgid="4"><img word="" class="img-list2" 
+
+src="http://sandbox.runjs.cn/uploads/rs/4/pfpcon3m/img_4.jpg"/></li>    </ul> 
+    </div>-->
+    </div>
+ </div>
+<% include foot_script %>
+<script>
+ /*  var img_id=1;
+   function flashmove(){
+     if(img_id==5) img_id=1;
+     
+     $("#js-img").attr("src","http://sandbox.runjs.cn/uploads/rs/4/pfpcon3m/img_"+img_id+".jpg");
+     $("#js-img").animate({opacity:'0'},0).animate({opacity:'1'},700);
+     $("#img-but"+img_id).siblings().find("img").addClass("img-list2");
+     $("#img-but"+img_id).find("img").removeClass("img-list2");
+     
+     $("#word-title").text($("#img-but"+img_id+" img").attr("word"));
+    }
+   
+   $(document).ready(function(){
+    function flashauto(){
+      img_id++;
+      flashmove();}
+     $(".imglistbut").each(function(i, target){
+      $(target).mouseenter(function(e){
+     $("#js-img").stop();
+     clearInterval(timer);
+     img_id=$(target).attr("imgid");
+     flashmove();
+     });
+     });
+    $(".imglistbut").mouseleave(function(){
+     timer= setInterval(flashauto,3000);
+    });
+    
+    
+    var timer= setInterval(flashauto,3000);
+  });*/
+if(is_mobile()=="pc"){
+document.getElementById("js-img").src="http://ncepubbb-com.qiniudn.com/upload/background/homepage1-2.jpg"
+}
+else{
+document.getElementById("js-img").src="http://ncepubbb-com.qiniudn.com/upload/background/homepage1.jpg"
+}
+</script>   
+<% include foot_close %>

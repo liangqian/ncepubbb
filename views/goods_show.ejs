@@ -1,0 +1,71 @@
+﻿<% include head %>
+
+<%
+var color = goods.status === 'finished' ? 'danger' : 'success';
+var status = goods.status === 'finished' ? 'SOLD' : 'SELLING';
+%>
+<div class="panel panel-<%= color %>">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-12"><h3><span class="label label-<%= color %>"><% if(status==='SOLD') { %>已达成<% } %><% if(status=='SELLING') { %>未达成<% } %></span>&nbsp;<%= goods.title %></h3></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3"><strong>发出日期</strong></div>
+            <div ><date><%=: goods.postDate | formatDate %></date></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3"><strong>用户</strong></div>
+            <div ><a href="/goods?user=<%= goods.user %>"><em><%= goods.user %></em></a>  <% if (privilege === 'staruser') { %>星级用户<% } %></div>
+        </div>
+        <% if (phone !== '') { 
+           if ( user.privilege === 'administrator' || user.privilege === 'staruser') { %>
+        <div class="row">
+            <div class="col-xs-3"><strong>手机</strong></div>
+            <div><%= phone %></div>
+        </div>
+        <% } } %>
+        <% if (wechat !== '') { %>
+        <div class="row">
+            <div class="col-xs-3"><strong>微信</strong></div>
+            <div><%= wechat %></div>
+        </div>
+        <% } %>
+        <% if (qq !== '') { %>
+        <div class="row">
+            <div class="col-xs-3"><strong>QQ</strong></div>
+            <div><%= qq %></div>
+        </div>
+        <% } %>
+
+        <% if (user.name === goods.user || user.privilege === 'administrator') { %>
+        <div class="row">
+            <div style="float:left"><a href="/goods/<%= goods.id %>/modify" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i> 修改</a></div>
+            <div style="float:left"><a href="/goods/<%= goods.id %>/delete" class="btn btn-danger"><i class="glyphicon glyphicon-edit"></i> 删除</a></div>
+        </div>
+        <% } %>
+    </div>
+    <div class="panel-body">
+        <pre><%= goods.content %></pre>
+        <div class="goods-images"><% for (var i = 0; i < goods.images.length; ++i) { %>
+            <a href="<%= settings.imageCDN %>/<%= settings.upload %>/<%= goods.images[i].path %>" target="_blank"><img src="<%= settings.imageCDN %>/<%= settings.upload %>/thumb/<%= goods.images[i].path %>"></a>
+        <% } %></div>
+     <% if (user.privilege === 'administrator' || user.name===goods.user) { %>
+        <% if (goods.intenum>0) { %>
+                <p>他们对您的商品感兴趣</p>
+                 <p><% for (var j=0; j<goods.intenum; j++) { %>
+                        <a href="/goods?user=<%= goods.interest[j] %>"><%= goods.interest[j] %></a>&nbsp;&nbsp;&nbsp;
+                  <% } %></p>
+            <% } %>
+         <% } %>
+    </div>
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-xs-2">Tags</div>
+            <div class="col-xs-10"><% for (var i = 0; i < goods.tags.length; ++i) { %>
+                <a href="/goods?tags=<%= goods.tags[i] %>"><span class="label label-default"><%= goods.tags[i] %></span></a>
+            <% } %></div>
+        </div>
+    </div>
+</div>
+
+<% include foot %>
